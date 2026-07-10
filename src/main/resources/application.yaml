@@ -1,0 +1,24 @@
+app:
+  url:
+    base: http://localhost:8080/
+
+spring:
+  application:
+    name: shortURL
+
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
