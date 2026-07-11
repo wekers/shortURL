@@ -3,6 +3,8 @@ package com.wekers.shortURL.service;
 import com.wekers.shortURL.entity.ShortUrl;
 import com.wekers.shortURL.repository.ShortUrlRepository;
 import com.wekers.shortURL.util.Base62Encoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ public class UrlShortenerService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
+    private static final Logger log =
+            LoggerFactory.getLogger(UrlShortenerService.class);
 
 
     public UrlShortenerService(
@@ -44,12 +48,24 @@ public class UrlShortenerService {
 
         validate(originalUrl);
 
+        log.info("Solicitação para encurtar URL: {}", originalUrl);
+
         return repository.findByOriginalUrl(originalUrl)
                 .map(existing -> {
+
+                    log.info(
+                            "URL já cadastrada. Reutilizando código '{}'",
+                            existing.getShortCode()
+                    );
+
                     return existing.getShortCode();
 
                 })
                 .orElseGet(() -> {
+
+                    log.info(
+                            "URL não encontrada. Gerando novo código."
+                    );
 
                     ShortUrl entity = new ShortUrl();
 
@@ -66,6 +82,13 @@ public class UrlShortenerService {
 
                     repository.save(entity);
 
+
+                    log.info(
+                            "URL encurtada. Código='{}', Destino='{}'",
+                            code,
+                            originalUrl
+                    );
+
                     return code;
 
                 });
@@ -74,6 +97,10 @@ public class UrlShortenerService {
 
     public Optional<String> getOriginalUrl(String code) {
 
+        log.info(
+                "[{}] Resolvendo URL curta",
+                code
+        );
 
 
         String cacheKey = PREFIX + code;
@@ -84,8 +111,22 @@ public class UrlShortenerService {
 
         if (cachedUrl != null) {
 
+            log.info(
+                    "[{}] Cache HIT. Encontrado no Redis. Redirecionando para '{}'",
+                    code,
+                    cachedUrl
+            );
+
+
             return Optional.of(cachedUrl);
         }
+
+
+        log.info(
+                "[{}] Cache MISS. Buscando no banco.",
+                code
+        );
+
 
         return repository.findByShortCode(code)
                 .map(entity -> {
@@ -98,10 +139,21 @@ public class UrlShortenerService {
                             );
 
 
+                    log.info(
+                            "[{}] Encontrado no banco e armazenado no Redis.",
+                            code
+                    );
+
+
                     return entity.getOriginalUrl();
 
                 })
                 .or(() -> {
+
+                    log.warn(
+                            "[{}] Código não encontrado.",
+                            code
+                    );
 
                     return Optional.empty();
 
