@@ -1,33 +1,71 @@
+## Configuração
+
+Copie o arquivo `.env.example` para `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Edite o arquivo `.env` caso deseje alterar as credenciais do PostgreSQL.
 ## Subindo a infraestrutura
 
 ```bash
-docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+docker compose --env-file .env up -d
 ```
 
-Verificar container:
+Verificar containers:
 
 ```bash
 docker ps
 ```
 
-Executar a aplicação:
+## Executando a aplicação
+
+Carregue as variáveis de ambiente:
+
+```bash
+source .env
+```
+
+Execute a aplicação:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Endpoints:
+## Redis Insight
 
-Criar URL encurtada:
-POST /shorten
+A interface web do Redis Stack estará disponível em:
+
+http://localhost:8001
+
+## Endpoints
+
+### Criar URL encurtada
+
 ```bash
 curl -X POST http://localhost:8080/shorten \
--H "Content-Type: application/json" \
--d '{"url": "http://www.example.com/muito/longa/url/de/teste"}'
+  -H "Content-Type: application/json" \
+  -d '{"url":"http://www.example.com/muito/longa/url/de/teste"}'
 ```
 
-Acessar URL encurtada:
-GET /{shortUrl}
+Resposta:
+
+```json
+{
+  "shortUrl": "http://localhost:8080/fxSL"
+}
+```
+
+### Redirecionar
+
 ```bash
-curl -v http://localhost:8080/{shortUrl}
+curl -v http://localhost:8080/fxSL
+```
+
+Resposta:
+
+```
+HTTP/1.1 302 Found
+Location: http://www.example.com/muito/longa/url/de/teste
 ```
