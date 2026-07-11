@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: shorturl-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: shorturl
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5437:5432"
+
+    networks:
+        - shorturl-network
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 10
+
+
+  redis:
+    image: redis/redis-stack:latest
+    container_name: shorturl-redis
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    networks:
+      - shorturl-network
+
+    volumes:
+      - redis_data:/data
+
+networks:
+  shorturl-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
