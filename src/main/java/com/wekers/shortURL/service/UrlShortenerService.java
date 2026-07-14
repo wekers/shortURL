@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
@@ -163,30 +164,32 @@ public class UrlShortenerService {
 
     private void validate(String url) {
 
+        if (!StringUtils.hasText(url)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "URL é obrigatória"
+            );
+        }
+
         try {
 
             URI uri = URI.create(url);
 
-
             if (uri.getScheme() == null) {
-
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
                         "URL inválida"
                 );
             }
 
-
             if (!uri.getScheme().equalsIgnoreCase("http")
-                    &&
-                    !uri.getScheme().equalsIgnoreCase("https")) {
+                    && !uri.getScheme().equalsIgnoreCase("https")) {
 
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
                         "Somente HTTP/HTTPS são permitidos"
                 );
             }
-
 
         } catch (IllegalArgumentException ex) {
 
