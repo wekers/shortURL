@@ -1,4 +1,6 @@
 package com.wekers.shortURL.dto;
 
-public record ShortenRequest(String url) {
+import jakarta.validation.constraints.NotBlank;
+
+public record ShortenRequest(@NotBlank String url) {
 }
