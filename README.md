@@ -1,5 +1,6 @@
 # 🔗 Short URL
 
+[![Build](https://github.com/wekers/shortURL/actions/workflows/build.yml/badge.svg)](https://github.com/wekers/shortURL/actions/workflows/build.yml)
 [![Java](https://img.shields.io/badge/Java-21-blue?logo=openjdk)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1-6DB33F?logo=springboot)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
