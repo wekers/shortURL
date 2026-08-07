@@ -39,22 +39,20 @@ class UrlShortenerServiceTest {
     private static final String PREFIX = "shorturl:";
 
     @Nested
-    @DisplayName("Encurtamento de URL")
+    @DisplayName("URL Shortening")
     class Shorten {
 
         @Test
-        @DisplayName("Deve criar uma URL nova")
-        void shouldCreateNewShortUrl() {
+        @DisplayName("Should create a new short URL")        void shouldCreateNewShortUrl() {
             String originalUrl = "https://example.com";
             long generatedId = 123L;
 
             when(repository.findByOriginalUrl(originalUrl)).thenReturn(Optional.empty());
 
-            // Simula a geração de ID ao salvar
             when(repository.saveAndFlush(any(ShortUrl.class)))
                     .thenAnswer(invocation -> {
                         ShortUrl entity = invocation.getArgument(0);
-                        entity.setId(generatedId); // ID mockado
+                        entity.setId(generatedId);
                         return entity;
                     });
 
@@ -79,7 +77,7 @@ class UrlShortenerServiceTest {
         }
 
         @Test
-        @DisplayName("Não deve criar URL duplicada")
+        @DisplayName("Should reuse an existing short code")
         void shouldReuseExistingCode() {
             String originalUrl = "https://example.com";
             String existingCode = "abc123";
@@ -100,11 +98,11 @@ class UrlShortenerServiceTest {
     }
 
     @Nested
-    @DisplayName("Resolução de URL original")
+    @DisplayName("Original URL Resolution")
     class GetOriginalUrl {
 
         @Test
-        @DisplayName("Deve retornar do Redis (cache hit)")
+        @DisplayName("Should return from Redis when cached")
         void shouldReturnFromRedisWhenCached() {
             String code = "abc123";
             String cachedUrl = "https://cached.com";
@@ -119,7 +117,7 @@ class UrlShortenerServiceTest {
         }
 
         @Test
-        @DisplayName("Deve consultar banco quando Redis falhar (cache miss)")
+        @DisplayName("Should load URL from database on cache miss")
         void shouldLoadUrlFromDatabaseWhenCacheMiss() {
             String code = "abc123";
             String originalUrl = "https://fromdb.com";
@@ -139,7 +137,7 @@ class UrlShortenerServiceTest {
         }
 
         @Test
-        @DisplayName("Código inexistente (Redis e banco vazios)")
+        @DisplayName("Should return empty when code does not exist")
         void shouldReturnEmptyWhenCodeNotFound() {
             String code = "nonexistent";
             when(redisTemplate.opsForValue()).thenReturn(valueOps);
@@ -154,11 +152,11 @@ class UrlShortenerServiceTest {
     }
 
     @Nested
-    @DisplayName("Validação")
+    @DisplayName("Validation")
     class Validation {
 
         @Test
-        @DisplayName("Deve lançar exceção para URL nula")
+        @DisplayName("Should reject a null URL")
         void shouldThrowForNullUrl() {
             assertThatThrownBy(()           -> service.shorten(null))
                     .isInstanceOf(ResponseStatusException.class)
@@ -166,7 +164,7 @@ class UrlShortenerServiceTest {
         }
 
         @Test
-        @DisplayName("Deve lançar exceção para URL vazia")
+        @DisplayName("Should reject an empty URL")
         void shouldThrowForEmptyUrl() {
             assertThatThrownBy(() -> service.shorten(""))
                     .isInstanceOf(ResponseStatusException.class)
@@ -174,7 +172,7 @@ class UrlShortenerServiceTest {
         }
 
         @Test
-        @DisplayName("Deve lançar exceção para URL inválida")
+        @DisplayName("Should reject an invalid URL")
         void shouldThrowForInvalidUrl() {
             assertThatThrownBy(() -> service.shorten("invalid-url"))
                     .isInstanceOf(ResponseStatusException.class)
@@ -182,7 +180,7 @@ class UrlShortenerServiceTest {
         }
 
         @Test
-        @DisplayName("Deve lançar exceção para URL em branco")
+        @DisplayName("Should reject a blank URL")
         void shouldThrowForBlankUrl() {
 
             assertThatThrownBy(() -> service.shorten("   "))

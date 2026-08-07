@@ -49,13 +49,13 @@ public class UrlShortenerService {
 
         validate(originalUrl);
 
-        log.info("Solicitação para encurtar URL: {}", originalUrl);
+        log.info("Received URL shortening request: {}", originalUrl);
 
         return repository.findByOriginalUrl(originalUrl)
                 .map(existing -> {
 
                     log.info(
-                            "URL já cadastrada. Reutilizando código '{}'",
+                            "URL already exists. Reusing short code '{}'",
                             existing.getShortCode()
                     );
 
@@ -65,7 +65,8 @@ public class UrlShortenerService {
                 .orElseGet(() -> {
 
                     log.info(
-                            "URL não encontrada. Gerando novo código."
+                            "Original URL '{}' not found. Generating a new short code.",
+                            originalUrl
                     );
 
                     ShortUrl entity = new ShortUrl();
@@ -85,7 +86,7 @@ public class UrlShortenerService {
 
 
                     log.info(
-                            "URL encurtada. Código='{}', Destino='{}'",
+                            "Generated short code '{}' for URL '{}'",
                             code,
                             originalUrl
                     );
@@ -99,7 +100,7 @@ public class UrlShortenerService {
     public Optional<String> getOriginalUrl(String code) {
 
         log.info(
-                "[{}] Resolvendo URL curta",
+                "[{}] Retrieving original URL for short code.",
                 code
         );
 
@@ -113,7 +114,7 @@ public class UrlShortenerService {
         if (cachedUrl != null) {
 
             log.info(
-                    "[{}] Cache HIT. Encontrado no Redis. Redirecionando para '{}'",
+                    "[{}] Cache HIT. Found in Redis. Redirecting to '{}'",
                     code,
                     cachedUrl
             );
@@ -124,7 +125,7 @@ public class UrlShortenerService {
 
 
         log.info(
-                "[{}] Cache MISS. Buscando no banco.",
+                "[{}] Cache MISS. Loading from database.",
                 code
         );
 
@@ -141,7 +142,7 @@ public class UrlShortenerService {
 
 
                     log.info(
-                            "[{}] Encontrado no banco e armazenado no Redis.",
+                            "[{}] Loaded from database and cached in Redis.",
                             code
                     );
 
@@ -152,7 +153,7 @@ public class UrlShortenerService {
                 .or(() -> {
 
                     log.warn(
-                            "[{}] Código não encontrado.",
+                            "[{}] Short code not found.",
                             code
                     );
 
@@ -167,7 +168,7 @@ public class UrlShortenerService {
         if (!StringUtils.hasText(url)) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "URL é obrigatória"
+                    "URL is required"
             );
         }
 
@@ -178,7 +179,7 @@ public class UrlShortenerService {
             if (uri.getScheme() == null) {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "URL inválida"
+                        "URL must start with http:// or https://"
                 );
             }
 
@@ -187,7 +188,7 @@ public class UrlShortenerService {
 
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "Somente HTTP/HTTPS são permitidos"
+                        "Only HTTP and HTTPS URLs are supported"
                 );
             }
 
@@ -195,7 +196,7 @@ public class UrlShortenerService {
 
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "URL inválida"
+                    "Invalid URL"
             );
         }
     }

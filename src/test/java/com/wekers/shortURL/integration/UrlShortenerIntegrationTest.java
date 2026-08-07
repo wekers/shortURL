@@ -63,7 +63,7 @@ class UrlShortenerIntegrationTest {
     private RedisTemplate<String, String> redisTemplate;
 
     @Test
-    @DisplayName("Deve executar o fluxo completo do encurtador")
+    @DisplayName("Should execute complete shortener flow")
     void shouldExecuteCompleteShortenerFlow() {
 
         String originalUrl = "https://integration.test";
@@ -130,7 +130,7 @@ class UrlShortenerIntegrationTest {
                 .isEqualTo(originalUrl);
 
         //-------------------------------------------------------
-        // Mesmo POST novamente (idempotência)
+        // Duplicate request (idempotent)
         //-------------------------------------------------------
 
         ShortenResponse duplicated =

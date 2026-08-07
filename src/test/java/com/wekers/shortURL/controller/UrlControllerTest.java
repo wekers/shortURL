@@ -35,7 +35,7 @@ class UrlControllerTest {
             "http://localhost:8080/";
 
     @Test
-    @DisplayName("POST /shorten deve retornar URL encurtada")
+    @DisplayName("POST /shorten should return a shortened URL")
     void shortenShouldReturnShortUrl() throws Exception {
         String originalUrl = "https://example.com";
         String shortCode = "abc123";
@@ -56,7 +56,7 @@ class UrlControllerTest {
     }
 
     @Test
-    @DisplayName("GET /{code} deve redirecionar quando URL existir")
+    @DisplayName("GET /{code} should redirect when URL exists")
     void redirectShouldReturnFound() throws Exception {
         String code = "abc123";
         String targetUrl = "https://target.com";
@@ -68,7 +68,7 @@ class UrlControllerTest {
     }
 
     @Test
-    @DisplayName("GET /{code} deve retornar 404 se código não existir")
+    @DisplayName("GET /{code} should return 404 for an unknown short code")
     void redirectShouldReturnNotFound() throws Exception {
         String code = "unknown";
         when(service.getOriginalUrl(code)).thenReturn(Optional.empty());
@@ -78,14 +78,14 @@ class UrlControllerTest {
     }
 
     @Test
-    @DisplayName("POST /shorten deve retornar 400 para URL inválida")
+    @DisplayName("POST /shorten should return 400 for an invalid URL")
     void shortenShouldReturnBadRequest() throws Exception {
 
         when(service.shorten("invalid"))
                 .thenThrow(
                         new ResponseStatusException(
                                 HttpStatus.BAD_REQUEST,
-                                "URL inválida"
+                                "Invalid URL"
                         )
                 );
 
@@ -101,7 +101,7 @@ class UrlControllerTest {
     }
 
     @Test
-    @DisplayName("POST /shorten deve rejeitar corpo vazio")
+    @DisplayName("POST /shorten should reject an empty body")
     void shortenShouldRejectEmptyBody() throws Exception {
 
         mockMvc.perform(post("/shorten")
