@@ -262,26 +262,25 @@ Location: https://example.com/products/electronics/notebooks/gaming/high-perform
 
 ### Roadmap
 
-```text
-Roadmap
 
-[x] URL Shortening
-[x] PostgreSQL
-[x] Redis
-[x] Docker Compose
-[x] Unit Tests
-[x] Controller Tests
-[x] Integration Tests
-[x] Testcontainers
-[x] GitHub Actions
-[x] Build Badge
+- [x] URL Shortening
+- [x] PostgreSQL
+- [x] Redis
+- [x] Docker Compose
+- [x] Unit Tests
+- [x] Controller Tests
+- [x] Integration Tests
+- [x] Testcontainers
+- [x] GitHub Actions
+- [x] Build Badge
 
 ## Future Improvements
+
 - [ ] API documentation (OpenAPI / Swagger)
 - [ ] Metrics with Micrometer + Prometheus
 - [ ] Docker image publishing
 - [ ] Deployment to a cloud provider
-```
+
 ## License
 
 MIT
