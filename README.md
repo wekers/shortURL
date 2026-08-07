@@ -273,16 +273,14 @@ Roadmap
 [x] Controller Tests
 [x] Integration Tests
 [x] Testcontainers
+[x] GitHub Actions
+[x] Build Badge
 
-[ ] GitHub Actions
-[ ] Build Badge
-[ ] OpenAPI / Swagger
-[ ] Rate Limiting
-[ ] Click Analytics
-[ ] Micrometer
-[ ] Prometheus
-[ ] Grafana
-[ ] Kubernetes Deployment
+## Future Improvements
+- [ ] API documentation (OpenAPI / Swagger)
+- [ ] Metrics with Micrometer + Prometheus
+- [ ] Docker image publishing
+- [ ] Deployment to a cloud provider
 ```
 ## License
 
